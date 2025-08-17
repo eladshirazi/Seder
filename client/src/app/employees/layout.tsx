@@ -1,0 +1,54 @@
+'use client'
+
+import { useState } from 'react'
+import { useAuth } from '@/lib/AuthContext'
+import { Sidebar } from '@/components/ui/sidebar'
+import { Topbar } from '@/components/ui/topbar'
+import { LayoutDashboard, Boxes, Users, DollarSign, UserPlus, Calendar, Settings } from 'lucide-react'
+
+interface EmployeesLayoutProps {
+  children: React.ReactNode
+}
+
+const nav = [
+  { name: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard /> },
+  { name: 'Inventory', href: '/inventory', icon: <Boxes /> },
+  { name: 'Employees', href: '/employees', icon: <Users />, active: true },
+  { name: 'Finance', href: '/finance', icon: <DollarSign /> },
+]
+
+
+
+export default function EmployeesLayout({ children }: EmployeesLayoutProps) {
+  const { user, isLoading } = useAuth()
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f8fafc]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null // Will redirect to login via AuthProvider
+  }
+
+  return (
+    <div className="min-h-screen bg-[#f8fafc] flex">
+      {/* Sidebar */}
+      <Sidebar nav={nav} />
+      {/* Main content area */}
+      <div className="flex-1 flex flex-col min-h-screen lg:pl-64">
+        <Topbar />
+        <main className="flex-1 py-8 px-6 max-w-7xl mx-auto w-full">
+          {children}
+        </main>
+      </div>
+    </div>
+  )
+} 
